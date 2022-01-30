@@ -55,7 +55,7 @@ services:
       - elasticsearch
       - rabbitmq
       - registry
-      - config
+      - configuration
       - apigateway
     build: ./query
     restart: on-failure
@@ -68,7 +68,7 @@ services:
       - mongo
       - rabbitmq
       - registry
-      - config
+      - configuration
       - apigateway
     build: ./command
     restart: on-failure
@@ -89,7 +89,7 @@ services:
   registry:
     container_name: registry
     depends_on:
-      - config
+      - configuration
     build: ./registry
     restart: on-failure
     ports:
