@@ -1,0 +1,111 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:4.4
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - 26000:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=cqrs
+      - MONGO_DB_USERNAME=user
+      - MONGO_DB_PASSWORD=user
+    volumes:
+      - ./db/mongo/data:/data/db/
+      - ./log/mongo/logs:/var/log/mongodb/
+      - ./initdb.d:/docker-entrypoint-initdb.d/
+    networks:
+      - main-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    container_name: es
+    environment:
+      - discovery.type=single-node
+    mem_limit: 2g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./db/es/data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - main-network
+  
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ./rabbitmq/data/:/var/lib/rabbitmq/
+        - ./rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - main-network
+  
+  query:
+    container_name: query
+    depends_on:
+      - elasticsearch
+      - rabbitmq
+      - registry
+      - config
+      - apigateway
+    build: ./query
+    restart: on-failure
+    networks:
+      - main-network
+
+  command:
+    container_name: command
+    depends_on:
+      - mongo
+      - rabbitmq
+      - registry
+      - config
+      - apigateway
+    build: ./command
+    restart: on-failure
+    networks:
+      - main-network
+  
+  apigateway:
+    container_name: apigateway
+    depends_on:
+      - registry
+    build: ./apigateway
+    restart: on-failure
+    ports:
+      - 8080:8080
+    networks:
+      - main-network
+      - test-network
+    
+  registry:
+    container_name: registry
+    depends_on:
+      - config
+    build: ./registry
+    restart: on-failure
+    ports:
+      - 8761:8761
+    networks:
+      - main-network
+
+  config:
+    container_name: config
+    build: ./config
+    restart: on-failure
+    networks:
+      - main-network
+    
+
+networks:
+  main-network:
+# External network
