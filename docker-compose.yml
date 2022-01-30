@@ -85,8 +85,7 @@ services:
       - 8080:8080
     networks:
       - main-network
-      - test-network
-    
+
   registry:
     container_name: registry
     depends_on:
@@ -98,9 +97,9 @@ services:
     networks:
       - main-network
 
-  config:
-    container_name: config
-    build: ./config
+  configuration:
+    container_name: configuration
+    build: configuration
     restart: on-failure
     networks:
       - main-network

@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>cqrs.microservice</groupId>
-	<artifactId>config</artifactId>
+	<artifactId>configuration</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>config</name>
+	<name>configuration</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>

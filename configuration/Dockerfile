@@ -1,7 +1,7 @@
 FROM maven:3-jdk-11
 
-ADD . /config
-WORKDIR /config
+ADD . /configuration
+WORKDIR /configuration
 
 RUN ls -l
 

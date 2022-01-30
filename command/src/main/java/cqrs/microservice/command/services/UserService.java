@@ -31,8 +31,8 @@ public class UserService {
     }
 
     public String createUser(User user) throws JsonProcessingException {
-        boolean isUserPresent = this.userRepository.findById(user.getId()).isPresent();
-        if (isUserPresent) {
+        User checkUser = this.userRepository.findByIdentif(user.getId());
+        if (checkUser != null) {
             return "The user's id exists already!";
         }
 
@@ -47,7 +47,7 @@ public class UserService {
     }
 
     public String deleteUser(String id) throws JsonProcessingException {
-        User deletedUser = this.userRepository.findById(id);
+        User deletedUser = this.userRepository.findByIdentif(id);
 
         if (deletedUser == null) {
             return "User does not exist!";
